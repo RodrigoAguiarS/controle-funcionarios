@@ -1,8 +1,7 @@
 package com.rodrigo.api.services;
 
-import com.rodrigo.api.exception.FuncionarioNaoEncontradoException;
-import com.rodrigo.api.exception.JornadaNaoEncontradoException;
 import com.rodrigo.api.exception.MensagensError;
+import com.rodrigo.api.exception.ObjetoNaoEncontradoException;
 import com.rodrigo.api.model.Funcionario;
 import com.rodrigo.api.model.Jornada;
 import com.rodrigo.api.model.Ponto;
@@ -50,7 +49,7 @@ public class JornadaService {
     private Jornada criarJornada(Long funcionarioId, LocalDate data) {
         Jornada novaJornada = new Jornada();
         Funcionario funcionario = funcionarioRepository.findById(funcionarioId)
-                .orElseThrow(() -> new FuncionarioNaoEncontradoException(MensagensError.
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(MensagensError.
                         FUNCIONARIO_NAO_ENCONTRADO_POR_ID.getMessage(funcionarioId)));
         novaJornada.setFuncionario(funcionario);
         novaJornada.setData(data);
@@ -70,7 +69,7 @@ public class JornadaService {
      */
     public Jornada atualizarResumoJornada(Long jornadaId, List<Ponto> pontos) {
         Jornada jornada = jornadaRepository.findById(jornadaId)
-                .orElseThrow(() -> new JornadaNaoEncontradoException(MensagensError.
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(MensagensError.
                         JORNADA_NAO_ENCONTRADO_POR_ID.getMessage(jornadaId)));
 
         Duration horasTrabalhadas = calcularHorasTrabalhadas(pontos);
@@ -119,8 +118,7 @@ public class JornadaService {
      */
     @Transactional
     public ResumoJornadaDTO getResumoJornadaFuncionario(Long funcionarioId, LocalDate data) {
-        Jornada jornada = jornadaRepository.findByFuncionarioIdAndData(funcionarioId, data)
-                .orElseThrow(() -> new JornadaNaoEncontradoException(MensagensError.JORNADA_NAO_ENCONTRADO.getMessage()));
+        Jornada jornada = buscarOuCriarJornada(funcionarioId, data);
 
         boolean jornadaCompleta = jornada.getHorasRestantes().isZero() || jornada.getHorasRestantes().isNegative();
         Duration horasExtras = jornada.getHorasExtras();
@@ -128,7 +126,7 @@ public class JornadaService {
 
         List<PontoDTO> pontos = jornada.getPontos().stream()
                 .sorted(Comparator.comparing(Ponto::getDataHora))
-                .map(ponto -> new PontoDTO(ponto.getId(), ponto.getDataHora(), ponto.getTipo().name()))
+                .map(ponto -> new PontoDTO(ponto.getId(), ponto.getDataHora(), ponto.getObservacao(), ponto.getTipo().name()))
                 .collect(Collectors.toList());
 
         return new ResumoJornadaDTO(data, pontos, jornadaCompleta, horasRestantes, horasExtras);

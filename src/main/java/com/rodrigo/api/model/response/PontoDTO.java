@@ -15,5 +15,6 @@ import java.time.LocalDateTime;
 public class PontoDTO {
     private Long id;
     private LocalDateTime dataHora;
+    private String observacao;
     private String tipo;
 }

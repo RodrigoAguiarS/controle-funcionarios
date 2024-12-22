@@ -48,6 +48,11 @@ public abstract class CrudServiceImpl<Entity, Form, Response> implements CrudSer
      */
     protected abstract void desativar(Entity entity);
 
+    /**
+     * Método responsável por validar a exclusão de uma entidade
+     * @param id Id da entidade
+     */
+    protected abstract void validarExclusao(Long id);
 
     /**
      * Método responsável por criar uma entidade
@@ -108,6 +113,7 @@ public abstract class CrudServiceImpl<Entity, Form, Response> implements CrudSer
      */
     @Override
     public void apagar(Long id) {
+        validarExclusao(id);
         repository.deleteById(id);
     }
 

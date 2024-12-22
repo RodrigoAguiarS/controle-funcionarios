@@ -16,7 +16,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PontoForm {
     @NotNull
-    private LocalDateTime novaDataHora;
+    private LocalDateTime dataHora;
+
+    private String observacao;
+
+    @NotNull
+    private Long funcionario;
 
     @NotNull
     private TipoPonto tipo;

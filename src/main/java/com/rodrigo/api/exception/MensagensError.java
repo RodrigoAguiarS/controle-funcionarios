@@ -19,8 +19,14 @@ public enum MensagensError {
     JORNADA_NAO_ENCONTRADO_POR_ID("A Jornada com o ID: %d não foi encontrado."),
     JORNADA_NAO_ENCONTRADO("Jornada não encontrada para o funcionário na data especificada."),
 
+    // Cargo
+    CARGO_POSSUI_FUNCIONARIO("Não é possível excluir o cargo. Existem funcionários associados a ele."),
+
     // Ponto
-    PONTO_NAO_ENCONTRADO("O Ponto não foi encontrado.");
+    PONTO_NAO_ENCONTRADO("O Ponto não foi encontrado."),
+
+    PERFIL_POSSUI_USUARIO("Não é possível excluir o Perfil. Existem Usuários associados a ele"),
+    TIPO_CONTRADO_POSSUI_FUNCIONARIO("Não é possível excluir o Tipo de Contrato. Existem funcionários associados a ele");
 
     private final String message;
 

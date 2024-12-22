@@ -24,6 +24,8 @@ public class Ponto extends BaseEntidade {
     @Column(nullable = false)
     private LocalDateTime dataHora;
 
+    private String observacao;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoPonto tipo;

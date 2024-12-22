@@ -1,7 +1,7 @@
 package com.rodrigo.api.auth;
 
 import com.rodrigo.api.exception.MensagensError;
-import com.rodrigo.api.exception.UsuarioNaoEncontradoException;
+import com.rodrigo.api.exception.ObjetoNaoEncontradoException;
 import com.rodrigo.api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class AplicationConfiguration {
     @Bean
     UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmailIgnoreCase(username)
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(
                         MensagensError.USUARIO_NAO_ENCONTRADO_POR_LOGIN.getMessage(username)));
     }
 

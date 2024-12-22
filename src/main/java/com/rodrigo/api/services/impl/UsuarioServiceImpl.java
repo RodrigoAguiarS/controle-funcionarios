@@ -1,7 +1,7 @@
 package com.rodrigo.api.services.impl;
 
 import com.rodrigo.api.exception.MensagensError;
-import com.rodrigo.api.exception.UsuarioNaoEncontradoException;
+import com.rodrigo.api.exception.ObjetoNaoEncontradoException;
 import com.rodrigo.api.model.Cargo;
 import com.rodrigo.api.model.Endereco;
 import com.rodrigo.api.model.Funcionario;
@@ -57,11 +57,15 @@ public class UsuarioServiceImpl extends CrudServiceImpl<Usuario, UsuarioForm, Us
     }
 
     @Override
+    protected void validarExclusao(Long id) {
+    }
+
+    @Override
     protected Usuario montarEntidade(UsuarioForm usuarioForm, Long id) {
         Usuario usuario;
         if (id != null) {
             usuario = repository.findById(id).orElseThrow(() ->
-                    new UsuarioNaoEncontradoException(MensagensError.USUARIO_NAO_ENCONTRADO_POR_ID.getMessage(id)));
+                    new ObjetoNaoEncontradoException(MensagensError.USUARIO_NAO_ENCONTRADO_POR_ID.getMessage(id)));
         } else {
             usuario = new Usuario();
         }
@@ -125,7 +129,7 @@ public class UsuarioServiceImpl extends CrudServiceImpl<Usuario, UsuarioForm, Us
 
     public List<String> obterPerfis(String email) {
         Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new UsuarioNaoEncontradoException
+                .orElseThrow(() -> new ObjetoNaoEncontradoException
                         (MensagensError.USUARIO_NAO_ENCONTRADO_POR_LOGIN.getMessage(email)));
         return usuario.getPerfis().stream().map(Perfil::getNome).collect(Collectors.toList());
     }
@@ -133,13 +137,13 @@ public class UsuarioServiceImpl extends CrudServiceImpl<Usuario, UsuarioForm, Us
     public Usuario obterUsuarioPorEmail(String email) {
 
         return usuarioRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new UsuarioNaoEncontradoException
+                .orElseThrow(() -> new ObjetoNaoEncontradoException
                         (MensagensError.USUARIO_NAO_ENCONTRADO_POR_LOGIN.getMessage(email)));
     }
 
     public Usuario obterUsuarioPorId(Long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(
                         MensagensError.USUARIO_NAO_ENCONTRADO_POR_ID.getMessage(id)));
     }
 }

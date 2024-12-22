@@ -1,11 +1,12 @@
 package com.rodrigo.api.services;
 
 import com.rodrigo.api.exception.MensagensError;
-import com.rodrigo.api.exception.PontoNaoEncontradoException;
+import com.rodrigo.api.exception.ObjetoNaoEncontradoException;
 import com.rodrigo.api.model.Funcionario;
 import com.rodrigo.api.model.Jornada;
 import com.rodrigo.api.model.Ponto;
 import com.rodrigo.api.model.TipoPonto;
+import com.rodrigo.api.model.form.PontoForm;
 import com.rodrigo.api.repository.PontoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,18 +27,19 @@ public class PontoService {
     /**
      * Registra um ponto para um funcionário.
      *
-     * @param funcionarioId ‘ID’ do funcionário.
+     * @param pontoForm form do funcionário.
      * @return Ponto.
      */
-    public Ponto registrarPonto(Long funcionarioId) {
+    public Ponto registrarPonto(PontoForm pontoForm) {
         LocalDate hoje = LocalDate.now();
-        Jornada jornada = jornadaService.buscarOuCriarJornada(funcionarioId, hoje);
+        Jornada jornada = jornadaService.buscarOuCriarJornada(pontoForm.getFuncionario(), hoje);
         Funcionario funcionario = jornada.getFuncionario();
 
         TipoPonto proximoTipo = determinarProximoTipo(jornada.getId());
         Ponto ponto = new Ponto();
         ponto.setDataHora(LocalDateTime.now());
         ponto.setTipo(proximoTipo);
+        ponto.setObservacao(pontoForm.getObservacao());
         ponto.setFuncionario(funcionario);
         ponto.setJornada(jornada);
         atualizarJornadaAposRegistrarPonto(jornada, ponto);
@@ -108,30 +111,25 @@ public class PontoService {
         LocalDateTime inicioDoDia = hoje.atStartOfDay();
         LocalDateTime fimDoDia = hoje.atTime(23, 59, 59);
 
-        Ponto ultimoPontoDoDia = (Ponto) pontoRepository.findTopByFuncionarioIdAndDataHoraBetweenOrderByDataHoraDesc(funcionarioId, inicioDoDia, fimDoDia)
-                .orElseThrow(() -> new PontoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage()));
+        Optional<Ponto> ultimoPontoDoDia = pontoRepository.findTopByFuncionarioIdAndDataHoraBetweenOrderByDataHoraDesc(funcionarioId, inicioDoDia, fimDoDia);
 
-        if (ultimoPontoDoDia != null) {
-            return ultimoPontoDoDia.getTipo();
-        }
-
-        return TipoPonto.ENTRADA;
+        return ultimoPontoDoDia.map(Ponto::getTipo).orElse(null);
     }
 
     /**
      * Edita um ponto.
      *
      * @param pontoId     ‘ID’ do ponto.
-     * @param novaDataHora Nova data e hora.
-     * @param novoTipoPonto Novo tipo de ponto.
+     * @param pontoForm form.
      * @return Ponto.
      */
-    public Ponto editarPonto(Long pontoId, LocalDateTime novaDataHora, TipoPonto novoTipoPonto) {
+    public Ponto editarPonto(Long pontoId, PontoForm pontoForm) {
         Ponto ponto = pontoRepository.findById(pontoId)
-                .orElseThrow(() -> new PontoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage(pontoId)));
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage(pontoId)));
 
-        ponto.setDataHora(novaDataHora);
-        ponto.setTipo(novoTipoPonto);
+        ponto.setDataHora(pontoForm.getDataHora());
+        ponto.setTipo(pontoForm.getTipo());
+        ponto.setObservacao(pontoForm.getObservacao());
         atualizarJornadaAposRegistrarPonto(ponto.getJornada(), ponto);
         return pontoRepository.save(ponto);
     }
@@ -144,7 +142,7 @@ public class PontoService {
      */
     public Ponto obterPontoPorId(Long pontoId) {
         return pontoRepository.findById(pontoId)
-                .orElseThrow(() -> new PontoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage(pontoId)));
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage(pontoId)));
     }
 
     /**
@@ -154,7 +152,7 @@ public class PontoService {
      */
     public void apagarPonto(Long pontoId) {
         Ponto ponto = pontoRepository.findById(pontoId)
-                .orElseThrow(() -> new PontoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage(pontoId)));
+                .orElseThrow(() -> new ObjetoNaoEncontradoException(MensagensError.PONTO_NAO_ENCONTRADO.getMessage(pontoId)));
 
         Jornada jornada = ponto.getJornada();
         pontoRepository.delete(ponto);

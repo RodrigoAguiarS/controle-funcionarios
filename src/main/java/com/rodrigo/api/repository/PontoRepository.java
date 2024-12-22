@@ -23,6 +23,6 @@ public interface PontoRepository extends JpaRepository<Ponto, Long> {
     /**
      * Busca o último ponto de um funcionário num intervalo de tempo
      */
-    Optional<Object> findTopByFuncionarioIdAndDataHoraBetweenOrderByDataHoraDesc(Long funcionarioId,
+    Optional<Ponto> findTopByFuncionarioIdAndDataHoraBetweenOrderByDataHoraDesc(Long funcionarioId,
                                                                                  LocalDateTime inicioDoDia, LocalDateTime fimDoDia);
 }

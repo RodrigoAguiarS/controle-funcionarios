@@ -89,7 +89,7 @@ public class JornadaService {
      * @param pontos Lista de pontos.
      * @return Duração.
      */
-    private Duration calcularHorasTrabalhadas(List<Ponto> pontos) {
+    public Duration calcularHorasTrabalhadas(List<Ponto> pontos) {
         Duration total = Duration.ZERO;
         Ponto pontoEntrada = null;
 

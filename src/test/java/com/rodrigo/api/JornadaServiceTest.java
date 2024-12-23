@@ -6,7 +6,6 @@ import com.rodrigo.api.model.Ponto;
 import com.rodrigo.api.model.TipoContrato;
 import com.rodrigo.api.model.TipoPonto;
 import com.rodrigo.api.model.response.ResumoJornadaDTO;
-import com.rodrigo.api.repository.FuncionarioRepository;
 import com.rodrigo.api.repository.JornadaRepository;
 import com.rodrigo.api.services.JornadaService;
 import org.junit.jupiter.api.BeforeEach;

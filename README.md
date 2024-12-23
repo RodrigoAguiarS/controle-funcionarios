@@ -6,6 +6,7 @@ Este projeto é um sistema de gestão de jornadas de trabalho desenvolvido em Ja
 ## 🛠 Tecnologias Utilizadas
 
 ### Backend
+- **Java 17**.
 - **Spring Boot (v3.4.0)**: Framework para criação de aplicações Java.
 - **Spring Security (v6.1.4)**: Configuração de autenticação e autorização.
 - **Spring Data JPA**: Manipulação de dados com JPA/Hibernate.
